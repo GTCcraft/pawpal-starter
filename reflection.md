@@ -35,37 +35,32 @@ When building the plan task-by-task, the scheduler does not "look ahead" to lowe
 I used it as a thought partner for design decisions; at various points, I gave context and constraints and asked for possible approaches/architectures. I also used it to turn plans into real code once I approved them. The most helpful prompts were specific and gave all the necessary context.
 
 **b. Judgment and verification**
-Claude Code suggested that the
-
-- Describe one moment where you did not accept an AI suggestion as-is.
-- How did you evaluate or verify what the AI suggested?
+I evaluated every design decision and sometimes asked the AI to change its plan based on my judgment. For instance, Claude Code suggested that the end time for the schedule be generated based on the start time: start_time + available_minutes. I found this unnatural (users probably want to enter a specific start and end time, not provide a set number of available minutes), so I asked the AI to get both times from user input.
 
 ---
 
 ## 4. Testing and Verification
 
 **a. What you tested**
+- **Happy paths**: adding a pet to an owner, adding tasks to a pet, and building a predictable daily plan from a known set of tasks
+- **Edge cases**: generating a plan with no tasks, and with two tasks that conflict on the same scheduled time
+- **Sorting**: `Scheduler.sort_by_time()` returns tasks in chronological order (untimed tasks last)
+- **Recurrence**: marking a daily task complete spawns a new instance due the next day
+- **Conflict detection**: `Scheduler.detect_conflicts()` flags tasks pinned to the same time
 
-- What behaviors did you test?
-- Why were these tests important?
+These cover the core functionality of the app, as well as edge cases that are likely to be encountered by a typical user. 
 
 **b. Confidence**
-
-- How confident are you that your scheduler works correctly?
-- What edge cases would you test next if you had more time?
-
+I'm confident that the scheduler will always return a schedule satisfying given constraints, in chronological order. With more time, I would test the edge case of re-running the scheduler after marking a task as complete.
 ---
 
 ## 5. Reflection
 
 **a. What went well**
-
-- What part of this project are you most satisfied with?
+The classes and their methods are very clean & logical. The overall architecture is well-designed.
 
 **b. What you would improve**
-
-- If you had another iteration, what would you improve or redesign?
+I would improve the UI; as of now, it's pretty soulless. 
 
 **c. Key takeaway**
-
-- What is one important thing you learned about designing systems or working with AI on this project?
+Once you have a good idea of what the system should look like, AI makes the actual implementation very fast & painless. 

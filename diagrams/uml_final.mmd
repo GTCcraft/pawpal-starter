@@ -1,0 +1,82 @@
+classDiagram
+    class Priority {
+        <<enumeration>>
+        LOW
+        MEDIUM
+        HIGH
+    }
+
+    class Frequency {
+        <<enumeration>>
+        DAILY
+        WEEKLY
+    }
+
+    class Task {
+        +title: str
+        +duration_minutes: int
+        +priority: Priority
+        +completed: bool
+        +pet_name: str
+        +scheduled_time: str?
+        +due_date: date
+        +frequency: Frequency?
+        +mark_complete() Task?
+        +__str__() str
+    }
+
+    class Pet {
+        +name: str
+        +species: str
+        +tasks: list~Task~
+        +add_task(task)
+        +get_tasks() list~Task~
+        +get_task_count() int
+        +mark_task_complete(task)
+    }
+
+    class Owner {
+        +name: str
+        +pets: list~Pet~
+        +add_pet(pet)
+        +get_all_tasks() list~Task~
+    }
+
+    class ScheduledEntry {
+        +start_time: str
+        +task: Task
+    }
+
+    class DailyPlan {
+        +scheduled_tasks: list~ScheduledEntry~
+        +unscheduled_tasks: list~Task~
+        +reasoning: str
+        +display() str
+        +explain() str
+    }
+
+    class Scheduler {
+        +start_time: str
+        +end_time: str
+        +plan(owner) DailyPlan
+        +sort_by_time(tasks) list~Task~
+        +filter_tasks(tasks, completed, pet_name) list~Task~
+        +detect_conflicts(tasks) list~str~
+        -_prioritize(tasks) list~Task~
+        -_fits_in_window(task, minutes_remaining) bool
+        -_add_to_plan(plan, task, start_time)
+        -_to_minutes(time_str) int
+        -_to_clock(minutes) str
+    }
+
+    Owner "1" *-- "0..*" Pet : has
+    Pet "1" *-- "0..*" Task : has
+    Task --> Priority : priority
+    Task ..> Frequency : frequency (optional)
+    Task ..> Task : mark_complete() spawns next occurrence
+    Scheduler ..> Owner : plan(owner) reads
+    Scheduler ..> DailyPlan : creates
+    Scheduler ..> ScheduledEntry : creates
+    DailyPlan "1" *-- "0..*" ScheduledEntry : scheduled_tasks
+    ScheduledEntry "1" --> "1" Task : task
+    DailyPlan "1" o-- "0..*" Task : unscheduled_tasks

@@ -61,13 +61,9 @@ class Task:
         )
 
     def __str__(self) -> str:
-        """Render as a checklist line, e.g. "[x] Mochi: Feeding (10 min) [priority: high]"."""
-        status = "x" if self.completed else " "
+        """Render as a task line, e.g. "Mochi: Feeding (10 min) [priority: high]"."""
         pet_part = f"{self.pet_name}: " if self.pet_name else ""
-        return (
-            f"[{status}] {pet_part}{self.title} "
-            f"({self.duration_minutes} min) [priority: {self.priority.value}]"
-        )
+        return f"{pet_part}{self.title} ({self.duration_minutes} min) [priority: {self.priority.value}]"
 
 
 @dataclass

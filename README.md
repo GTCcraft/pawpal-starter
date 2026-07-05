@@ -1,28 +1,16 @@
-# PawPal+ (Module 2 Project)
+# PawPal+
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+A Streamlit app that helps a pet owner plan care tasks for their pet.
 
-## Scenario
+## ✨ Features
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
-
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
-
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
-
-## What you will build
-
-Your final app should:
-
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
-
-## Getting started
+- Manage multiple pets under one owner profile
+- Add care tasks with a duration, priority, and an optional fixed time of day
+- Mark tasks as one-time, daily, or weekly — completing a recurring task automatically schedules its next occurrence
+- Filter the task list by pet or by completion status
+- Generate a daily plan for a configurable start/end window: fixed-time tasks are honored at their requested slot, flexible tasks fill the remaining gaps by priority
+- Conflict warnings whenever two tasks are pinned to the same time
+- Full reasoning behind every generated plan — why each task was scheduled, skipped, or flagged
 
 ### Setup
 
@@ -31,16 +19,6 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
-
-### Suggested workflow
-
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
 
 ## 🖥️ Sample Output
 ```
@@ -87,12 +65,41 @@ Reliability: ⭐⭐⭐⭐
 
 ## 📸 Demo Walkthrough
 
-Describe your app in numbered steps so a reader can follow along without watching a video:
+1. Open the app and enter your name as the owner.
+2. Add a pet (e.g., "Mochi", species "dog") using the **Add a pet** form.
+3. Add a task for that pet in **Add Task** (e.g., "Morning walk", 30 min, high priority).
+4. Check **All Tasks** — the new task appears.
+5. Set the day's start/end time in **Build Schedule** and click **Generate schedule**.
+6. View the task placed in **Today's Schedule**, and expand **Why this plan?** to see the scheduler's reasoning.
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+Other scheduling behaviors (sorting, filtering, conflict detection) are available in the app, and can be seen directly in the terminal by running `main.py`:
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+```
+$ python main.py
+=== Sorting by time ===
+  08:00  Mochi: Morning walk (30 min) [priority: high]
+  08:00  Mochi: Feeding (10 min) [priority: high]
+  17:00  Mochi: Fetch in the yard (20 min) [priority: low]
+   --   Luna: Litter box cleaning (10 min) [priority: medium]
+   --   Luna: Brushing (15 min) [priority: low]
+
+=== Filtering: incomplete tasks for Mochi ===
+  Mochi: Fetch in the yard (20 min) [priority: low]
+  Mochi: Feeding (10 min) [priority: high]
+
+=== Conflict detection (Feeding and Morning walk both at 08:00) ===
+  Warning: 'Morning walk' (Mochi) and 'Feeding' (Mochi) are both scheduled at 08:00.
+
+Today's Schedule:
+  - 08:00  Mochi: Feeding (10 min) [priority: high]
+  - 08:10  Luna: Litter box cleaning (10 min) [priority: medium]
+  - 08:20  Luna: Brushing (15 min) [priority: low]
+  - 17:00  Mochi: Fetch in the yard (20 min) [priority: low]
+
+Reasoning:
+Scheduled 'Feeding' (priority: high, 10 min) at its requested time 08:00.
+Scheduled 'Litter box cleaning' (priority: medium, 10 min) at 08:10.
+Scheduled 'Brushing' (priority: low, 15 min) at 08:20.
+'Fetch in the yard' at 17:00 extends past your available window (ends 09:00).
+Scheduled 'Fetch in the yard' (priority: low, 20 min) at its requested time 17:00.
+```

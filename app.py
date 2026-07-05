@@ -14,27 +14,6 @@ Welcome to PawPal+. Add pets and tasks below, then generate a daily plan.
 """
 )
 
-with st.expander("Scenario", expanded=True):
-    st.markdown(
-        """
-**PawPal+** is a pet care planning assistant. It helps a pet owner plan care tasks
-for their pet(s) based on constraints like time, priority, and preferences.
-
-You will design and implement the scheduling logic and connect it to this Streamlit UI.
-"""
-    )
-
-with st.expander("What you need to build", expanded=True):
-    st.markdown(
-        """
-At minimum, your system should:
-- Represent pet care tasks (what needs to happen, how long it takes, priority)
-- Represent the pet and the owner (basic info and preferences)
-- Build a plan/schedule for a day that chooses and orders tasks based on constraints
-- Explain the plan (why each task was chosen and when it happens)
-"""
-    )
-
 st.divider()
 
 
@@ -48,7 +27,6 @@ def _time_to_str(t: time) -> str:
 
 if "owner" not in st.session_state:
     st.session_state.owner = Owner(name="Jordan")
-    st.session_state.owner.add_pet(Pet(name="Mochi", species="dog"))
 if "scheduler" not in st.session_state:
     st.session_state.scheduler = Scheduler()
 
@@ -83,34 +61,38 @@ st.divider()
 
 st.subheader("Add Task")
 pet_names = [pet.name for pet in owner.pets]
-task_pet_name = st.selectbox("Pet", pet_names)
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    task_title = st.text_input("Task title", value="Morning walk")
-with col2:
-    duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
-with col3:
-    priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+if not pet_names:
+    st.info("Add a pet above before adding tasks.")
+else:
+    task_pet_name = st.selectbox("Pet", pet_names)
 
-col4, col5 = st.columns(2)
-with col4:
-    repeats = st.selectbox("Repeats", ["One-time", "Daily", "Weekly"])
-with col5:
-    has_time = st.checkbox("This task has a specific time")
-    task_time = st.time_input("Time", value=time(8, 0)) if has_time else None
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        task_title = st.text_input("Task title", value="Morning walk")
+    with col2:
+        duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
+    with col3:
+        priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
 
-if st.button("Add task") and pet_names:
-    frequency = {"One-time": None, "Daily": Frequency.DAILY, "Weekly": Frequency.WEEKLY}[repeats]
-    _find_pet(owner, task_pet_name).add_task(
-        Task(
-            title=task_title,
-            duration_minutes=int(duration),
-            priority=Priority(priority),
-            frequency=frequency,
-            scheduled_time=_time_to_str(task_time) if task_time else None,
+    col4, col5 = st.columns(2)
+    with col4:
+        repeats = st.selectbox("Repeats", ["One-time", "Daily", "Weekly"])
+    with col5:
+        has_time = st.checkbox("This task has a specific time")
+        task_time = st.time_input("Time", value=time(8, 0)) if has_time else None
+
+    if st.button("Add task"):
+        frequency = {"One-time": None, "Daily": Frequency.DAILY, "Weekly": Frequency.WEEKLY}[repeats]
+        _find_pet(owner, task_pet_name).add_task(
+            Task(
+                title=task_title,
+                duration_minutes=int(duration),
+                priority=Priority(priority),
+                frequency=frequency,
+                scheduled_time=_time_to_str(task_time) if task_time else None,
+            )
         )
-    )
 
 st.divider()
 
@@ -129,8 +111,15 @@ filtered_tasks = scheduler.filter_tasks(
     pet_name=None if filter_pet == "All" else filter_pet,
 )
 
+conflicts = scheduler.detect_conflicts(all_tasks)
+if conflicts:
+    for warning in conflicts:
+        st.warning(f"⚠️ Scheduling conflict: {warning}")
+else:
+    st.success("No scheduling conflicts.")
+
 if filtered_tasks:
-    for task in filtered_tasks:
+    for task in scheduler.sort_by_time(filtered_tasks):
         row_col1, row_col2 = st.columns([1, 6])
         with row_col1:
             checked = st.checkbox("Done", value=task.completed, key=f"complete_{id(task)}", label_visibility="collapsed")
@@ -158,6 +147,11 @@ scheduler.end_time = _time_to_str(day_end)
 
 if st.button("Generate schedule"):
     plan = scheduler.plan(owner)
+
+    if plan.unscheduled_tasks:
+        st.warning(f"⚠️ {len(plan.unscheduled_tasks)} task(s) didn't fit and were left unscheduled.")
+    else:
+        st.success("All eligible tasks fit in today's window.")
 
     st.text(plan.display())
     with st.expander("Why this plan?"):
