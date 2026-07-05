@@ -43,15 +43,21 @@ pip install -r requirements.txt
 7. Refine UML so it matches what you actually built.
 
 ## 🖥️ Sample Output
-
-Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
-
 ```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
+Today's Schedule:
+  - [ ] Morning walk (30 min) [priority: high]
+  - [ ] Feeding (10 min) [priority: high]
+  - [ ] Litter box cleaning (10 min) [priority: medium]
+Unscheduled (ran out of time):
+  - [ ] Fetch in the yard (20 min) [priority: low]
+  - [ ] Brushing (15 min) [priority: low]
+
+Reasoning:
+Scheduled 'Morning walk' (priority: high, 30 min) — 30 min remaining.
+Scheduled 'Feeding' (priority: high, 10 min) — 20 min remaining.
+Scheduled 'Litter box cleaning' (priority: medium, 10 min) — 10 min remaining.
+Skipped 'Fetch in the yard' (20 min) — only 10 min remaining.
+Skipped 'Brushing' (15 min) — only 10 min remaining.
 ```
 
 ## 🧪 Testing PawPal+
