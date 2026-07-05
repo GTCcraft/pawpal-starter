@@ -17,33 +17,25 @@ The necessary classes are:
 
 **b. Design changes**
 Made task priority take an enum + created Priority enum w/ constant strings to make code more readable. 
-
-Also made Scheduler's plan() method take a Pet, not an Owner, since each schedule will be for one pet only. 
-
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
 
 **a. Constraints and priorities**
-
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler honors tasks w/ mandatory fixed times (e.g. vet appointments), and considers the lengths and priority levels of all other tasks when slotting them into the remaining space. Owner preferences were too complex to implement & don't matter for MVP.
 
 **b. Tradeoffs**
-
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+When building the plan task-by-task, the scheduler does not "look ahead" to lower priority tasks to fill a time gap that can't be filled by the current task; it strictly adds tasks in order of priority. This tradeoff is reasonable b/c it makes the plan() logic simpler and the scheduler will still output sensible schedules most of the time.
 
 ---
 
 ## 3. AI Collaboration
 
 **a. How you used AI**
-
-- How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+I used it as a thought partner for design decisions; at various points, I gave context and constraints and asked for possible approaches/architectures. I also used it to turn plans into real code once I approved them. The most helpful prompts were specific and gave all the necessary context.
 
 **b. Judgment and verification**
+Claude Code suggested that the
 
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?

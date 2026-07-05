@@ -45,19 +45,13 @@ pip install -r requirements.txt
 ## 🖥️ Sample Output
 ```
 Today's Schedule:
-  - [ ] Morning walk (30 min) [priority: high]
-  - [ ] Feeding (10 min) [priority: high]
-  - [ ] Litter box cleaning (10 min) [priority: medium]
-Unscheduled (ran out of time):
-  - [ ] Fetch in the yard (20 min) [priority: low]
-  - [ ] Brushing (15 min) [priority: low]
+  - 08:12  [ ] Rex: Vet appointment (15 min) [priority: high]
+  - 08:27  [ ] Rex: Big high-priority task (20 min) [priority: high]
+  - 08:47  [ ] Rex: Small low-priority task (10 min) [priority: low]
 
-Reasoning:
-Scheduled 'Morning walk' (priority: high, 30 min) — 30 min remaining.
-Scheduled 'Feeding' (priority: high, 10 min) — 20 min remaining.
-Scheduled 'Litter box cleaning' (priority: medium, 10 min) — 10 min remaining.
-Skipped 'Fetch in the yard' (20 min) — only 10 min remaining.
-Skipped 'Brushing' (15 min) — only 10 min remaining.
+Scheduled 'Vet appointment' (priority: high, 15 min) at its requested time 08:12.
+Scheduled 'Big high-priority task' (priority: high, 20 min) at 08:27.
+Scheduled 'Small low-priority task' (priority: low, 10 min) at 08:47.
 ```
 
 ## 🧪 Testing PawPal+
@@ -78,14 +72,12 @@ Sample test output:
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler.sort_by_time()`, `Scheduler._prioritize()` | Tasks w/ specific scheduled times can be sorted chronologically; all tasks can be sorted by priority, high to low |
+| Filtering | `Scheduler.filter_tasks()` | Filter by completion status and/or pet name |
+| Conflict handling | `Scheduler.detect_conflicts()` | Warns (without crashing) when two tasks share the same `scheduled_time` |
+| Recurring tasks | `Task.mark_complete()`, `Pet.mark_task_complete()` | Completing a daily/weekly task spawns its next occurrence with an advanced `due_date` |
 
 ## 📸 Demo Walkthrough
 
