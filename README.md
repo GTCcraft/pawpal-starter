@@ -56,20 +56,26 @@ Scheduled 'Small low-priority task' (priority: low, 10 min) at 08:47.
 
 ## 🧪 Testing PawPal+
 
+`tests/test_pawpal.py` covers:
+
+- **Happy paths**: adding a pet to an owner, adding tasks to a pet, and building a predictable daily plan from a known set of tasks
+- **Edge cases**: generating a plan with no tasks, and with two tasks that conflict on the same scheduled time
+- **Sorting**: `Scheduler.sort_by_time()` returns tasks in chronological order (untimed tasks last)
+- **Recurrence**: marking a daily task complete spawns a new instance due the next day
+- **Conflict detection**: `Scheduler.detect_conflicts()` flags tasks pinned to the same time
+
 ```bash
 # Run the full test suite:
-pytest
-
-# Run with coverage:
-pytest --cov
+python -m pytest -q
 ```
 
 Sample test output:
 
 ```
-# Paste your pytest output here
+.........                                                                                                                                              [100%]
+9 passed in 0.02s
 ```
-
+Reliability: ⭐⭐⭐⭐
 ## 📐 Smarter Scheduling
 
 | Feature | Method(s) | Notes |
